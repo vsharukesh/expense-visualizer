@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Expense Visualizer</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💰</text></svg>">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="logo">
+                <i class="fas fa-money-bill-wave"></i>
+                <span>SmartExpense</span>
+            </div>
+            <ul class="nav-links">
+                <li><a href="#dashboard" class="active">Dashboard</a></li>
+                <li><a href="#insights">Insights</a></li>
+                <li><a href="#add-expense">Add Expense</a></li>
+                <li><a href="#settings">Settings</a></li>
+            </ul>
+            <div class="theme-toggle">
+                <i class="fas fa-moon"></i>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main>
+        <!-- Hero Section -->
+        <section id="hero" class="hero">
+            <div class="container">
+                <div class="hero-content">
+                    <div class="heading-container">
+                        <h1 class="animate-text">Visualize Your Expenses,<br>Master Your Budget</h1>
+                        <div class="floating-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                    </div>
+                    <p class="subtitle">Smart insights and beautiful visualizations to help you understand your spending habits</p>
+                    <button class="btn btn-primary get-started">Get Started</button>
+                </div>
+                <div class="hero-image">
+                    <div class="quick-summary">
+                        <div class="summary-item" id="today-spending">
+                            <i class="fas fa-coins"></i>
+                            <div>
+                                <span>Today's Spending</span>
+                                <h3><span class="currency-symbol">$</span><span class="amount">0.00</span></h3>
+                            </div>
+                        </div>
+                        <div class="summary-item" id="monthly-spending">
+                            <i class="fas fa-calendar-alt"></i>
+                            <div>
+                                <span>Monthly Spending</span>
+                                <h3><span class="currency-symbol">$</span><span class="amount">0.00</span></h3>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="quote-container">
+                        <p class="quote-text">"The habit of saving is itself an education."</p>
+                        <p class="quote-author">- T.T. Munger</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Dashboard Section -->
+        <section id="dashboard" class="section">
+            <div class="container">
+                <h2>Your Expense Dashboard</h2>
+                <div class="dashboard-grid">
+                    <div class="card total-spending">
+                        <h3>Total Spending</h3>
+                        <div class="amount" id="total-amount">$0.00</div>
+                        <div class="trend">
+                            <span class="trend-up"><i class="fas fa-arrow-up"></i> 12% from last month</span>
+                        </div>
+                    </div>
+                    <div class="card chart-container">
+                        <h3>Monthly Overview</h3>
+                        <canvas id="monthlyChart"></canvas>
+                    </div>
+                    <div class="card categories">
+                        <h3>Categories</h3>
+                        <div class="category-list" id="category-list">
+                            <!-- Will be populated by JavaScript -->
+                        </div>
+                    </div>
+                    <div class="card recent-transactions">
+                        <div class="card-header">
+                            <h3>Recent Transactions</h3>
+                            <button class="btn btn-text" id="view-all">View All</button>
+                        </div>
+                        <div class="transactions-list" id="transactions-list">
+                            <!-- Will be populated by JavaScript -->
+                            <div class="empty-state">
+                                <i class="fas fa-receipt"></i>
+                                <p>No transactions yet</p>
+                                <button class="btn btn-outline" id="add-first-expense">Add Your First Expense</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Add Expense Section -->
+        <section id="add-expense" class="section hidden">
+            <div class="container">
+                <h2>Add New Expense</h2>
+                <form id="expense-form" class="expense-form">
+                    <div class="form-group">
+                        <label for="amount">Amount</label>
+                        <div class="input-group">
+                            <span class="input-prefix" id="currency-symbol">$</span>
+                            <input type="number" id="amount" step="0.01" min="0.01" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="description">Description</label>
+                        <input type="text" id="description" placeholder="e.g., Groceries, Rent, etc." required>
+                    </div>
+                    <div class="form-group">
+                        <label for="category">Category</label>
+                        <select id="category" required>
+                            <option value="">Select a category</option>
+                            <option value="food">Food & Dining</option>
+                            <option value="shopping">Shopping</option>
+                            <option value="transport">Transportation</option>
+                            <option value="bills">Bills & Utilities</option>
+                            <option value="entertainment">Entertainment</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="date">Date</label>
+                        <input type="date" id="date" required>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-outline" id="cancel-expense">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Add Expense</button>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+        <!-- Insights Section -->
+        <section id="insights" class="section hidden">
+            <div class="container">
+                <h2>Spending Insights</h2>
+                <div class="insights-grid">
+                    <div class="card">
+                        <h3>Top Category</h3>
+                        <div class="top-category-container">
+                            <div class="top-category-info">
+                                <div class="top-category-name" id="top-category">-</div>
+                                <div class="top-category-amount" id="top-category-amount">-</div>
+                            </div>
+                            <div class="category-icon">
+                                <i class="fas fa-tag"></i>
+                            </div>
+                        </div>
+                        <div class="insight-subtext">Your highest spending category</div>
+                    </div>
+                    <div class="card">
+                        <h3>Daily Average</h3>
+                        <div class="insight-value" id="daily-average">$0.00</div>
+                        <div class="insight-subtext">Average daily spending</div>
+                    </div>
+                    <div class="card">
+                        <h3>Month Change</h3>
+                        <div class="insight-value" id="month-change">0%</div>
+                        <div class="insight-subtext">vs last month</div>
+                    </div>
+                </div>
+                <div class="chart-container full-width">
+                    <canvas id="categoryChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <!-- Settings Section -->
+        <section id="settings" class="section hidden">
+            <div class="container">
+                <h2>Settings</h2>
+                <div class="settings-grid">
+                    <div class="card">
+                        <h3>Appearance</h3>
+                        <div class="setting-option">
+                            <span>Dark Mode</span>
+                            <label class="switch">
+                                <input type="checkbox" id="dark-mode-toggle">
+                                <span class="slider round"></span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <h3>Currency</h3>
+                        <div class="form-group">
+                            <select id="currency-select">
+                                <option value="USD">US Dollar ($)</option>
+                                <option value="EUR">Euro (€)</option>
+                                <option value="GBP">British Pound (£)</option>
+                                <option value="JPY">Japanese Yen (¥)</option>
+                                <option value="AUD">Australian Dollar (A$)</option>
+                                <option value="CAD">Canadian Dollar (C$)</option>
+                                <option value="CHF">Swiss Franc (CHF)</option>
+                                <option value="CNY">Chinese Yuan (¥)</option>
+                                <option value="HKD">Hong Kong Dollar (HK$)</option>
+                                <option value="NZD">New Zealand Dollar (NZ$)</option>
+                                <option value="SEK">Swedish Krona (kr)</option>
+                                <option value="KRW">South Korean Won (₩)</option>
+                                <option value="SGD">Singapore Dollar (S$)</option>
+                                <option value="NOK">Norwegian Krone (kr)</option>
+                                <option value="MXN">Mexican Peso (Mex$)</option>
+                                <option value="INR">Indian Rupee (₹)</option>
+                                <option value="RUB">Russian Ruble (₽)</option>
+                                <option value="ZAR">South African Rand (R)</option>
+                                <option value="BRL">Brazilian Real (R$)</option>
+                                <option value="AED">UAE Dirham (د.إ)</option>
+                                <option value="SAR">Saudi Riyal (﷼)</option>
+                                <option value="TRY">Turkish Lira (₺)</option>
+                                <option value="IDR">Indonesian Rupiah (Rp)</option>
+                                <option value="THB">Thai Baht (฿)</option>
+                                <option value="MYR">Malaysian Ringgit (RM)</option>
+                                <option value="PHP">Philippine Peso (₱)</option>
+                                <option value="DKK">Danish Krone (kr)</option>
+                                <option value="PLN">Polish Złoty (zł)</option>
+                                <option value="CZK">Czech Koruna (Kč)</option>
+                                <option value="HUF">Hungarian Forint (Ft)</option>
+                                <option value="ILS">Israeli New Shekel (₪)</option>
+                                <option value="CLP">Chilean Peso (CLP$)</option>
+                                <option value="PKR">Pakistani Rupee (₨)</option>
+                                <option value="EGP">Egyptian Pound (E£)</option>
+                                <option value="NGN">Nigerian Naira (₦)</option>
+                                <option value="VND">Vietnamese Đồng (₫)</option>
+                                <option value="BDT">Bangladeshi Taka (৳)</option>
+                                <option value="ARS">Argentine Peso (AR$)</option>
+                                <option value="COP">Colombian Peso (COL$)</option>
+                                <option value="PEN">Peruvian Sol (S/.)</option>
+                                <option value="TWD">New Taiwan Dollar (NT$)</option>
+                                <option value="KWD">Kuwaiti Dinar (د.ك)</option>
+                                <option value="QAR">Qatari Riyal (﷼)</option>
+                                <option value="OMR">Omani Rial (﷼)</option>
+                                <option value="BHD">Bahraini Dinar (ب.د)</option>
+                                <option value="JOD">Jordanian Dinar (د.ا)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="card danger-zone">
+                        <h3>Danger Zone</h3>
+                        <p>This will permanently delete all your expense data. This action cannot be undone.</p>
+                        <button class="btn btn-danger" id="reset-data">Reset All Data</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-message">
+                    <h3>SmartExpense</h3>
+                    <p>Helping you track and visualize your expenses since 2025</p>
+                </div>
+                <div class="footer-links">
+                    <a href="https://www.linkedin.com/in/sharukeshv09/" target="_blank" rel="noopener noreferrer" class="social-link">
+                        <i class="fab fa-linkedin"></i> Connect on LinkedIn
+                    </a>
+                </div>
+                <div class="footer-bottom">
+                    <p>© 2025 SmartExpense. Created with ❤️ by <span class="highlight-name">Sharukesh V</span></p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Add Expense Button (Floating) -->
+    <button class="fab" id="add-expense-fab">
+        <i class="fas fa-plus"></i>
+    </button>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast"></div>
+
+    <!-- Welcome Popup -->
+    <div class="welcome-popup" id="welcomePopup">
+        <div class="welcome-content">
+            <div class="welcome-icon">&#128075;</div>
+            <h2>Welcome to SmartExpense!</h2>
+            <p>A website created by Sharukesh V just to help people track their expenses &#x1F4B0;</p>
+            <p>Go ahead and make use of the website! &#x1F4C9;</p>
+            <button class="btn btn-primary" id="getStartedBtn">Get Started</button>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="app.js" type="module"></script>
+</body>
+</html>
